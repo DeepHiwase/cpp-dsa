@@ -5,8 +5,8 @@ class Heap
 {
 public:
   int *arr;
-  int capacity;
   int size;
+  int capacity;
 
   Heap(int capacity)
   {
@@ -15,7 +15,7 @@ public:
     this->size = 0;
   }
 
-  void insert(int val)
+  void insertIntoHeap(int val)
   {
     if (size == capacity)
     {
@@ -26,14 +26,13 @@ public:
     int index = size;
     arr[index] = val;
 
-    // follow heapify
+    // heapification
     while (index > 1)
     {
       int parentIndex = index / 2;
-      // here we are following max heap
-      if (arr[index] > arr[parentIndex])
+      if (arr[parentIndex] < arr[index]) // here mistake
       {
-        swap(arr[index], arr[parentIndex]);
+        swap(arr[parentIndex], arr[index]);
         index = parentIndex;
       }
       else
@@ -45,41 +44,36 @@ public:
     return;
   }
 
-  int deleteInHeap()
+  int deleteFromHeap()
   {
     int answer = arr[1];
-    // replacement
     arr[1] = arr[size];
-    // last element delete kardo from original position
     size--;
 
-    // heapification
     int index = 1;
     while (index < size)
     {
       int leftIndex = 2 * index;
       int rightIndex = 2 * index + 1;
 
-      // to find out who is greatest -> for max heap heapification
       int largestKaIndex = index;
-      // bhul jata hu -> check index is in range before accessing in array
-      if (leftIndex <= size && arr[leftIndex] > arr[largestKaIndex])
+      if (leftIndex <= size && arr[largestKaIndex] < arr[leftIndex])
       {
         largestKaIndex = leftIndex;
       }
-      if (rightIndex <= size && arr[rightIndex] > arr[largestKaIndex])
+      if (rightIndex <= size && arr[largestKaIndex] < arr[rightIndex])
       {
         largestKaIndex = rightIndex;
       }
 
       // no change
-      if (index == largestKaIndex)
+      if (largestKaIndex == index)
       {
         break;
       }
       else
       {
-        swap(arr[index], arr[largestKaIndex]);
+        swap(arr[largestKaIndex], arr[index]);
         index = largestKaIndex;
       }
     }
@@ -93,6 +87,7 @@ public:
       cout << arr[i] << " ";
     }
     cout << endl;
+    return;
   }
 };
 
@@ -102,6 +97,7 @@ void heapify(int *arr, int n, int index)
   int rightIndex = 2 * index + 1;
   int largestKaIndex = index;
 
+  // max from three
   if (leftIndex <= n && arr[largestKaIndex] < arr[leftIndex])
   {
     largestKaIndex = leftIndex;
@@ -110,10 +106,13 @@ void heapify(int *arr, int n, int index)
   {
     largestKaIndex = rightIndex;
   }
+  // after this two condi, largestKaIndex will be pointing towards largest element among 3
 
   if (index != largestKaIndex)
   {
-    swap(arr[largestKaIndex], arr[index]);
+    // processing
+    swap(arr[index], arr[largestKaIndex]);
+    // ad recursion smabhal lenga
     index = largestKaIndex;
     heapify(arr, n, index);
   }
@@ -131,30 +130,45 @@ void heapSort(int arr[], int n)
 {
   while (n != 1)
   {
-    swap(arr[1], arr[n]);
-    n--;
+    swap(arr[1], arr[n]); // yaha mistake hoti hai, n not n -1 since 1 based indexing
+    n--;                  // show size is 1 less to not affect last element
     heapify(arr, n, 1);
   }
 }
 
 int main()
 {
-  Heap h(20);
+  // Heap h(10);
 
-  // insertion
-  h.insert(100);
-  h.insert(50);
-  h.insert(60);
-  h.insert(40);
-  h.insert(30);
-  h.insert(20);
+  // h.insertIntoHeap(100);
+  // h.insertIntoHeap(50);
+  // h.insertIntoHeap(60);
+  // h.insertIntoHeap(40);
+  // h.insertIntoHeap(30);
+  // h.insertIntoHeap(20);
 
-  cout << "Printing the content of Heap:" << endl;
-  h.printHeap();
+  // h.printHeap();
 
-  int deleteAns = h.deleteInHeap();
-  cout << "Delete Node from heap: " << deleteAns << endl;
-  h.printHeap();
+  // int answer = h.deleteFromHeap();
+  // cout << "Delete from heap: " << answer << endl;
+  // h.printHeap();
+
+
+  int arr[] = {-1, 5, 10, 15, 20, 25, 12}; // gallti, actual element 1 index se start ho rahe hai, put -1 at 0th index
+  int n = 6;
+  buildHeap(arr, 6);
+  cout << "Printing Heap: " << endl;
+  for (int i = 1; i <= 6; i++) {
+    cout << arr[i] << " ";
+  }
+  cout << endl;
+
+  heapSort(arr, n);
+  cout << "Printing Heap: " << endl;
+  for (int i = 1; i <= 6; i++) {
+    cout << arr[i] << " ";
+  }
+  cout << endl;
 
   return 0;
 }
